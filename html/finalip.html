@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html>
+    <script>
+        function getiplist(option){
+          // alert("function called");
+          $('#ip_return').find('option').remove().end();
+          $('#ip_extend').find('option').remove().end();
+        
+    
+          var scriptName = "http://10.105.217.113/cgi-bin/getlist.py";
+          if(option=="return"){
+            var form = document.getElementById("return_form");
+            list_id=document.getElementById("ip_return");
+          }
+          else{
+            var form = document.getElementById("extend_form");
+            list_id=document.getElementById("ip_extend");
+    
+          }
+          
+    
+          var xmlhttp;
+          const FD = new FormData(form);
+           //may be .cgi as well depending on how you are using it
+           if (window.XMLHttpRequest) {
+               xmlhttp = new XMLHttpRequest();
+            } 
+            else {
+                 xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            var xhttp = new XMLHttpRequest();
+          xhttp.onreadystatechange = function() {
+          if (this.readyState == 4 && this.status == 200) {
+           // Typical action to be performed when the document is ready:
+           response=xhttp.responseText;
+           //alert(response);
+           res = response.split("_");
+          //  alert("data_type"+typeof(res));
+          //  alert(res[0]+res[1]+res.length);
+           putlist(res,list_id);
+          }
+          };
+          xhttp.open("POST", scriptName, true);
+          xhttp.send(FD);
+        }
+        function putlist(arri,s1){
+    
+          for(var option in arri){
+            // alert(option+arri[option]);
+            if(option==0){
+            //   // var pair =arr[option].split("select|select");
+            // var newopt=document.createElement("option");
+            // newopt.value="select one";
+            // newopt.innerHTML="select one";
+            // s1.options.add(newopt);
+    
+            }
+            else{
+              // var pair =arr[option].split("|");
+            var newopt=document.createElement("option");
+            // newopt.value=pair[0];
+            newopt.innerHTML=arri[option];
+            s1.options.add(newopt);
+    
+            }
+        
+          }
+    
+        }
+        </script>
+    <script>
+        function getTasks(option) { 
+          // alert("normal");
+           //put more processing in the function as needed
+           if(option=="request"){
+            var scriptName = "http://10.105.217.113/cgi-bin/get_ip_test.py";
+            var form = document.getElementById( "request_form" );
+    
+           }
+           else if(option=="return"){
+            var scriptName = "http://10.105.217.113/cgi-bin/return_ip.py";
+            var form = document.getElementById( "return_form" );
+    
+            }
+          else{
+            var scriptName = "http://10.105.217.113/cgi-bin/extend_ip.py";
+            var form = document.getElementById( "extend_form" );
+    
+            }
+            //checking for all input
+    
+            let allAreFilled = true;
+            form.querySelectorAll("[required]").forEach(function(i) {
+           if (!allAreFilled){
+            // alert('Fill all the fields');
+            return;
+    
+           } 
+          if (!i.value) allAreFilled = false;
+      })
+      if (!allAreFilled) {
+        alert('Fill all the fields');
+        return;
+      }
+    
+            //
+           var xmlhttp;
+           const FD = new FormData( form );
+           //may be .cgi as well depending on how you are using it
+           if (window.XMLHttpRequest) {
+               xmlhttp = new XMLHttpRequest();
+            } else {
+                 xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            var xhttp = new XMLHttpRequest();
+          xhttp.onreadystatechange = function() {
+          if (this.readyState == 4 && this.status == 200) {
+           // Typical action to be performed when the document is ready:
+           response=xhttp.responseText;
+        //    alert(response);
+           var res = response.split("_");
+          //  alert("data_type"+typeof(res));
+          //  alert(res[0]);
+           if(option=="request"){
+            if(String(res[0])=="no"){
+              document.getElementById( "modal_head" ).innerHTML="Allocation Fail!!"
+              final_str=response;
+              $(".modal-header").css("background-color", "red");
+            }
+            else{
+              $(".modal-header").css("background-color", "#141e30");
+              document.getElementById( "modal_head" ).innerHTML="Allocation Success!!"
+              final_str="IP:"+String(res[1])+"\n"+"subnet:"+String(res[2])+"\n"+"Gateway:"+String(res[3])+"\n"+"Date From:"+String(res[4])+"\n"+"Date Till:"+String(res[5])+"\n"+"Cecid:"+String(res[6])+"\n"+"Name:"+String(res[7])+"\n";
+            }
+           }
+           else if(option=="return"){
+            if(String(res[0])=="invalid"){
+              $(".modal-header").css("background-color", "#141e30");
+              document.getElementById( "modal_head" ).innerHTML="Unallocation Fail!!"
+              final_str=response;
+            }
+            else{
+              $(".modal-header").css("background-color", "#141e30");
+              document.getElementById( "modal_head" ).innerHTML="Unallocation Success!!"
+              final_str=response;
+            }
+           }
+           else{
+            if(String(res[0])=="invalid"){
+              document.getElementById( "modal_head" ).innerHTML="Extend-Date Fail!!"
+              final_str=response;
+              $(".modal-header").css("background-color", "red");
+            }
+            else{
+              $(".modal-header").css("background-color", "#141e30");
+              document.getElementById( "modal_head" ).innerHTML="Extend-Date Success!!"
+              final_str="IP:"+String(res[1])+"\n"+"subnet:"+String(res[2])+"\n"+"Gateway:"+String(res[3])+"\n"+"Date_From:"+String(res[4])+"\n"+"Date_Till:"+String(res[5])+"\n"+"Cecid:"+String(res[6])+"\n"+"Name:"+String(res[7])+"\n";
+            }
+           }
+           modalfunction(final_str);
+          }
+          };
+          xhttp.open("POST", scriptName, true);
+          xhttp.send(FD);
+         }
+        </script>
+<style>
+    .modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+  position: relative;
+  background-color: #fefefe;
+  margin: auto;
+  padding: 0;
+  border: 1px solid #888;
+  width:40%;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+  -webkit-animation-name: animatetop;
+  -webkit-animation-duration: 0.4s;
+  animation-name: animatetop;
+  animation-duration: 0.4s
+}
+
+/* Add Animation */
+@-webkit-keyframes animatetop {
+  from {top:-300px; opacity:0} 
+  to {top:0; opacity:1}
+}
+
+@keyframes animatetop {
+  from {top:-300px; opacity:0}
+  to {top:0; opacity:1}
+}
+
+/* The Close Button */
+.close {
+  color: white;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.modal-header {
+  padding: 2px 16px;
+  background-color: #5cb85c;
+  color: white;
+}
+
+.modal-body {padding: 2px 16px;}
+html {
+  height: 100%;
+}
+body {
+  margin:0;
+  padding:0;
+  font-family: sans-serif;
+  background: #2d4c86;
+  height:max-content;
+}
+
+.main-box {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 400px;
+  padding: 40px;
+  transform: translate(-45%, -40%);
+  background: rgba(0,0,0,.5);
+  box-sizing: border-box;
+  box-shadow: 0 15px 25px rgba(0,0,0,.6);
+  border-radius: 10px;
+}
+
+.main-box h2 {
+  margin: 0 0 30px;
+  padding: 0;
+  color: #fff;
+  text-align: left;
+}
+
+.main-box h3 {
+  margin: 0 0 30px;
+  padding: 0;
+  color: #fff;
+  text-align:center;
+}
+
+.main-box .user-box {
+  position: relative;
+}
+
+.main-box .user-box input {
+  width: 100%;
+  padding: 10px 0;
+  font-size: 16px;
+  color: #fff;
+  margin-bottom: 30px;
+  border: none;
+  border-bottom: 1px solid #fff;
+  outline: none;
+  background: transparent;
+}
+.main-box .user-box label {
+  position: absolute;
+  top:0;
+  left: 0;
+  padding: 10px 0;
+  font-size: 16px;
+  color: #fff;
+  pointer-events: none;
+  transition: .5s;
+}
+
+.main-box .user-box input:focus ~ label,
+.main-box .user-box input:valid ~ label {
+  top: -20px;
+  left: 0;
+  color: #03e9f4;
+  font-size: 12px;
+}
+
+
+
+
+@keyframes btn-anim1 {
+  0% {
+    left: -100%;
+  }
+  50%,100% {
+    left: 100%;
+  }
+}
+
+.main-box a span:nth-child(2) {
+  top: -100%;
+  right: 0;
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(180deg, transparent, #03e9f4);
+  animation: btn-anim2 1s linear infinite;
+  animation-delay: .25s
+}
+
+@keyframes btn-anim2 {
+  0% {
+    top: -100%;
+  }
+  50%,100% {
+    top: 100%;
+  }
+}
+
+.main-box a span:nth-child(3) {
+  bottom: 0;
+  right: -100%;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(270deg, transparent, #03e9f4);
+  animation: btn-anim3 1s linear infinite;
+  animation-delay: .5s
+}
+
+@keyframes btn-anim3 {
+  0% {
+    right: -100%;
+  }
+  50%,100% {
+    right: 100%;
+  }
+}
+
+.main-box a span:nth-child(4) {
+  bottom: -100%;
+  left: 0;
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(360deg, transparent, #03e9f4);
+  animation: btn-anim4 1s linear infinite;
+  animation-delay: .75s
+}
+
+@keyframes btn-anim4 {
+  0% {
+    bottom: -100%;
+  }
+  50%,100% {
+    bottom: 100%;
+  }
+}
+
+input[type=text], select {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: none;
+  border-radius: 2px;
+  box-sizing: border-box;
+  border-bottom: 2px solid black;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+input[type=date].a {
+  width: 25%;
+  height: 30px;
+  border-radius: 2px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+input[type=date].b {
+  width: 35%;
+  height: 30px;
+  border-radius: 2px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+input[type=submit] {
+  width: 25%;
+  background-color: #049FD9;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+input[type=submit]:hover {
+  background-color: #049FD9;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+input[type="date"]::-webkit-inner-spin-button {
+        opacity: 0
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        background: url(https://cdn3.iconfinder.com/data/icons/linecons-free-vector-icons-pack/32/calendar-16.png) center/80% no-repeat;
+        color: rgba(255, 255, 255, 255);
+        opacity: 100
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator:hover {
+        background: url(https://cdn3.iconfinder.com/data/icons/linecons-free-vector-icons-pack/32/calendar-16.png) center/80% no-repeat;
+        opacity: 0.8
+    }
+
+div.basic {
+ color: #fff;
+}
+
+.request {
+
+}
+
+.return {
+
+}
+
+.extend {
+
+}
+</style>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script>
+$(document).ready(function(){
+    $("#type").change(function(){
+        $(this).find("option:selected").each(function(){
+            var optionValue = $(this).attr("value");
+            if(optionValue){
+                $(".basic").not("." + optionValue).hide();
+                $("." + optionValue).show();
+            } else{
+                $(".basic").hide();
+            }
+        });
+    }).change();
+});
+</script>
+<div id="myModal" class="modal">
+
+    <!-- Modal content -->
+    <div class="modal-content">
+      <div class="modal-header">
+        <span class="close">&times;</span>
+        <h2 id="modal_head"></h2>
+      </div>
+      <div class="modal-body">
+        <pre id="para" style="font-size: x-large;"></pre>
+       
+      </div>
+    </div>
+  
+  </div>
+  <script>
+    // Get the modal
+    var modal = document.getElementById("myModal");
+    
+    // Get the button that opens the modal
+    var btn = document.getElementById("myBtn");
+    
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    function modalfunction(str){
+      document.getElementById("para").innerHTML=str;
+      modal.style.display = "block";
+
+    }
+    
+    // When the user clicks the button, open the modal 
+    
+    
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+      modal.style.display = "none";
+    }
+    
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    }
+    </script>
+<div class="main-box">
+  <h2>SAO IP Provisioning Portal</h2>
+  <h3>Sparsha Lab</h3>
+  <div class="user-box">
+    <label for="type">Choose an action</label>
+    <div class="user-box">
+      <select id="type" name="type">
+        <option>Choose an action</option>
+        <option value="request">Request IP</option>
+        <option value="return">Return IP</option>
+        <option value="extend">Extend IP</option>
+      </select>
+    </div>
+    <div class="basic request">
+        <form id="request_form">
+        <br>
+        <div class="user-box">
+          <input type="text" id="name" name="name" required="">
+          <label>Name*</label>
+        </div>
+        <div class="user-box">
+          <input type="text" id="cecid" name="cecid" required="">
+          <label>CEC ID*</label>
+        </div>
+        <div class="user-box">
+          <input type="text" name="purpose" id="purpose" required="">
+          <label>Project Name*</label>
+        </div>
+        From Date*
+        <div class="a">
+          <label>From date*</label>
+          <input placeholder="From Date" onfocus="(this.type='date')" type="date" id="fromdate" name="fromdate" required="">
+        </div>
+        To Date*
+        <div class="a">
+          <label>To date*</label>
+          <input placeholder="To Date" onfocus="(this.type='date')" type="date" id="todate" name="todate" required="">
+        </div>
+
+        <!-- <div>
+          <input type="submit" value="Request">
+        </div> -->
+      </form>
+      <input type="submit" value="Request" type="button" onclick="getTasks('request');">
+    </div>
+      
+    <div class="basic return">
+        <form  id="return_form">
+        <br>
+        <div class="user-box">
+          <input type="text" id="cecid" name="cecid" required="" onchange="getiplist('return');">
+          <label>CEC ID*</label>
+        </div>
+	Select IP*
+        <div class="user-box">
+            <select id="ip_return"  name="ip_return" aria-placeholder="IP Address" required>
+                <option>Choose</option>
+            </select>
+          <!-- <input type="text" id="ip" name="ip" required pattern="((^|\.)((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]?\d))){4}$"> -->
+          <label>IP Address*</label>
+        </div>
+        <!-- <div>
+          <input type="submit" value="Return">
+        </div> -->
+      </form>
+      <input type="submit" value="Return" type="button" onclick="getTasks('return');">
+    </div>
+      
+    <div class="basic extend">
+        <form name="form1"  id="extend_form">
+        <br>
+        <div class="user-box">
+          <input type="text" id="cecid" name="cecid" required="" onchange="getiplist('extend')">
+          <label>CEC ID*</label>
+        </div>
+	Select IP*
+        <div class="user-box">
+            <select id="ip_extend" name="ip_extend" aria-placeholder="IP Address" required>
+                <option>Choose</option>
+              </select>
+          <!-- <input type="text" id="ip" name="ip" required pattern="((^|\.)((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]?\d))){4}$"> -->
+          <label>IP Address*</label>
+        </div>
+        Extend to Date*
+        <div class="a">
+          <input type="date" id="extenddate" name="extenddate" required="">
+          <label>Extend to Date*</label>
+        </div>
+        <!-- <div>
+          <input type="submit" value="Extend">
+        </div> -->
+      </form>
+      <input type="submit" value="Extend" type="button" onclick="getTasks('extend');">
+
+    </div>
+    <br>
+    <div class="center">
+      <img style="display: block;margin-left: auto;margin-right: auto;" src="Cisco-logo.png" alt="Logo" width="90" height="50">
+    </div>
+  </div>
+
+</div>
+</html>

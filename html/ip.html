@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<style>
+input[type=text], select {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: none;
+  border-radius: 2px;
+  box-sizing: border-box;
+  border-bottom: 2px solid black;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+input[type=date].a {
+  width: 25%;
+  height: 30px;
+  border-radius: 2px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+input[type=date].b {
+  width: 50%;
+  height: 30px;
+  border-radius: 2px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+input[type=submit] {
+  width: 25%;
+  background-color: #049FD9;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+input[type=submit]:hover {
+  background-color: #049FD9;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+div.a {
+  width: 97%;
+  border-radius: 5px;
+  background-color: #ffffff;
+  padding: 20px;
+  float:left
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+div.b {
+  width: 475px;
+  border-radius: 5px;
+  background-color: #ffffff;
+  padding: 20px;
+  float: left;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+div.c {
+  width: 670px;
+  border-radius: 5px;
+  background-color: #ffffff;
+  padding: 20px;
+  float: right;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+body {
+  background-color: #f1efef;
+  background-repeat: no-repeat;
+  background-attachment: fixed;  
+  background-size: cover;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+</style>
+<body >
+  <div style="display: inline-block;width:30%">
+    <img src="Cisco-logo.png" alt="Trulli" width="150" height="90" style="float: left;">
+  </div>
+  <div style="display: inline-block;">
+    <h1 style="text-align: center;">SAO IP Provisioning Portal</h1>
+  </div>
+  
+  
+<div class="a">
+ <h2>Request IP</h2>
+  <form action="http://10.105.217.113/cgi-bin/get_ip.py">
+    <label for="name">Name</label>
+    <input type="text" id="name" name="name" placeholder="Eg:Sadhana Myana">
+
+    <label for="cecid">CEC ID</label>
+    <input type="text" id="cecid" name="cecid" placeholder="Eg:sadmyana">
+    
+    <label for="purpose">Purpose</label>
+    <input type="text" id="purpose" name="purpose" placeholder="Eg:Training">
+
+    <label for="Description">Description</label>
+    <input type="text" id="description" name="description" placeholder="Eg: Need access to create a vm for training">
+
+    
+    
+    
+    <label for="fromdate">From date</label><br>
+    <input class="a" type="date" id="fromdate" name="fromdate">
+    <br><br>
+    <label for="todate">To date</label><br>
+    <input class="a" type="date" id="todate" name="todate">
+    <br><br>
+    <input type="submit" value="Request">
+  </form>
+</div>
+<br>
+<div class="b">
+ <h2>Return IP</h2>
+   <form action="http://10.105.217.113/cgi-bin/return_ip.py">
+    <label for="cecid">CEC ID</label>
+    <input type="text" id="fname" name="firstname" placeholder="Your name">
+    <input type="text" id="ip_addr" name="ip_addr" placeholder="IP Address">
+    <input type="submit" value="Return">
+   </form>
+</div>
+<div class="c">
+ <h2>Extend Date</h2>
+ <form action="http://10.105.217.113/cgi-bin/extend_ip.py">
+  <label for="cecid">CEC ID</label>
+  <input type="text" id="fname" name="firstname" placeholder="Your name">
+  
+  <label for="ip">IP</label>
+  <input type="text" id="ip" name="ip" placeholder="IP Address">
+
+  <label for="extenddate">Extended date</label>
+  <br>
+  <input class="b" type="date" id="extenddate" name="extenddate">
+  <br><br>
+  <input type="submit" value="Extend">
+ </form>
+
+</div>
+
+</body>
+</html>
